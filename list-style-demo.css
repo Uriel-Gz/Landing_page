@@ -1,0 +1,27 @@
+/* Método básico */
+ul {
+    list-style-image: url('ruta-de-tu-imagen.png');
+}
+
+/* Para más control sobre el tamaño */
+ul {
+    list-style: none;
+}
+
+ul li {
+    position: relative;
+    padding-left: 1.5em; /* Espacio para el icono */
+}
+
+ul li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 1em; /* Tamaño del icono */
+    height: 1em; /* Tamaño del icono */
+    background-image: url('ruta-de-tu-imagen.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+}

@@ -2,24 +2,19 @@ body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: rgb(2, 22, 46);
+    background-color: rgb(1, 10, 21);
     color: white;
 }
 
 header {
     /* Mantener tus estilos actuales */
-    background-color: #0479a7d2;
+    background-color: #0479a7a8;
     color: white;
     padding: 10px 10px;
     text-align: center;
     border-radius: 10px;
-    
-    /* Añadir estas propiedades para centrar horizontalmente */
-    width: 90%;           /* O el ancho que prefieras */
-    /* max-width: 1200px;    Para limitar el ancho en pantallas grandes */
+    width: 90%;
     margin: 20px auto;
-
-    /* O simplemente: margin: 0 auto; */
 }
 
 .logo {
@@ -28,6 +23,28 @@ header {
     vertical-align: middle;
     margin: 0;
     padding: 0;
+}
+
+.main-image {
+    position: relative;
+    top: -20%;
+    width: 110%;
+    height: auto;
+    max-width: 500px; /* Limita el ancho máximo de la imagen */
+    filter: drop-shadow(1px 15px 7px rgba(34, 217, 217, 0.596));
+}
+
+.main-section {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #036b9b2e;
+    width: 67vw;
+    height: 67vw;
+    max-width: 450px;
+    max-height: 450px;
+    border-radius: 50vw;
+    z-index: -1;
 }
 
 footer{
@@ -62,14 +79,31 @@ section {
     width: fit-content;
 }
 
+.features {
+    padding: 0;
+    margin: 5vh auto 7vh auto;
+    width: 45vw;
+    font-size: 1rem;
+    & h2 {
+        text-align: center;
+        color: #85d5fb;
+    }
+    & ul {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+}
+
 ul {
     list-style: none;    
+    text-align: center;
 }
 
 
 ul li {
     position: relative;
-    padding-left: 1.5em; /* Espacio para el icono */
+    padding-left: 1.5em;
 }
 
 ul li::before {
@@ -90,7 +124,7 @@ li:nth-child(even) {
 }
 
 li:nth-child(odd) {
-    right: 100px;
+    right: 150px;
 }
 
 h4{
@@ -161,6 +195,9 @@ iframe {
         transition: all 0.3s ease-in-out;
     }
 }
+
+/* cambio de tamaño */
+
 
 @media screen and (max-width: 768px) {
     picture {

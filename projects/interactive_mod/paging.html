@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    canvas {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: #000;
+        display: block;
+    }
+
+</style>
+<body>
+    <canvas></canvas>
+
+</body>
+
+<script>
+        const canvas = document.querySelector("canvas");
+        const ctx = canvas.getContext('2d');
+        let mouseMoved = false;
+        const pointer = {
+            x: 0.5 * window.innerWidth,
+            y: 0.5 * window.innerHeight,
+        }
+        const params = {
+            pointsNumber: 40,
+            widthFactor: 0.3,
+            mouseThreshold: 0.6,
+            spring: 0.4,
+            friction: 0.5,
+            color: 'linear-gradient(223,2,111,0.2)'  // Color del rastro
+        }
+
+        const trail = new Array(params.pointsNumber);
+
+        for(let i = 0; i < params.pointsNumber; i++){
+            trail[i] = {
+                x: pointer.x, 
+                y: pointer.y,
+                dx: 0,
+                dy: 0,
+            }
+        }
+
+        window.addEventListener('click', (e) => {
+            updateMousePosition(e);
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            mouseMoved = true;
+            updateMousePosition(e);
+        });
+
+        window.addEventListener('touchmove', (e) => {
+            mouseMoved = true;
+            updateMousePosition(e.targetTouches[0]);
+        });
+
+        function updateMousePosition(e){
+            pointer.x = e.clientX;
+            pointer.y = e.clientY;
+        }
+
+        function setupCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        setupCanvas();
+        update(0);
+        window.addEventListener('resize', setupCanvas);
+
+        function update(t) {
+            // Usar t para animar el color de la sombra
+            const time = t * 0.001; // convertir a segundos para un cambio más suave
+            
+            if(!mouseMoved){
+                pointer.x = (.5 + .3 *  Math.cos(.002 * t) * (Math.sin(.005 * t))) * window.innerWidth;
+                pointer.y = (.5 + .2 * (Math.cos(.005 * t) + .1 * Math.cos(.01 * t))) * window.innerHeight;
+            }
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            trail.forEach((point, index) => {
+                const prev = index === 0 ? pointer : trail[index - 1];
+                const spring = index === 0 ? .4 * params.spring : params.spring;
+
+                point.dx += (prev.x - point.x) * spring;
+                point.dy += (prev.y - point.y) * spring;
+                point.dx *= params.friction;
+                point.dy *= params.friction;
+                point.x += point.dx;
+                point.y += point.dy;
+            });
+
+            // Agregar efecto de desvanecimiento
+            // ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            // ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+
+            // Configurar el estilo del trazo
+            ctx.strokeStyle = params.color;
+            ctx.lineWidth = 2;
+            // ctx.lineCap = 'line'; // Cambiado de 'round' a 'line'
+            // ctx.lineJoin = 'line';
+            
+            // Añadir efecto de brillo con sombra dinámica
+            ctx.shadowBlur = 20;
+            // Crear un color de sombra que cambie con el tiempo
+            const shadowHue = (t * 0.1) % 360; // t es el timestamp que recibe la función update
+            ctx.shadowColor = `hsl(${shadowHue}, 100%, 50%)`;
+
+            ctx.beginPath();
+            ctx.moveTo(trail[0].x, trail[0].y);
+            
+            for(let i = 1; i < trail.length - 2; i++){
+                const xc = (trail[i].x + trail[i + 1].x) / 2;
+                const yc = (trail[i].y + trail[i + 1].y) / 2;
+
+                const distance = Math.sqrt((trail[i].x - trail[i - 1].x) ** 2 + (trail[i].y - trail[i - 1].y) ** 2);
+                const width = Math.max(5, params.widthFactor * (1 - Math.min(distance / (params.mouseThreshold * window.innerWidth), 1))) ;
+
+                ctx.lineWidth = width;
+                ctx.strokeStyle = `white`;
+                ctx.quadraticCurveTo(trail[i].x, trail[i].y, xc, yc);
+                ctx.stroke();
+            }
+            
+            // Asegurarse de que se complete el último segmento
+            if (trail.length > 2) {
+                const last = trail[trail.length - 1];
+                const secondLast = trail[trail.length - 2];
+                ctx.quadraticCurveTo(secondLast.x, secondLast.y, last.x, last.y);
+                ctx.stroke();
+            }
+
+            requestAnimationFrame(update);
+        }
+</script>
+</html>
